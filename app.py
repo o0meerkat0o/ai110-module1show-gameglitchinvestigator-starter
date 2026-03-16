@@ -101,10 +101,7 @@ if submit:
         st.error(err)
     else:
         st.session_state.history.append(guess_int)
-
-        # FIX: Even-attempt string casting removed entirely.
-        # Casting secret to str caused lexicographic comparison ("9" > "10"),
-        # giving wrong feedback silently. secret is always an int now.
+##
         secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
