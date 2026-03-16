@@ -12,7 +12,7 @@ It wrote the code, ran away, and now the game is unplayable.
 ## 🛠️ Setup
 
 1. Install dependencies: `pip install -r requirements.txt`
-2. Run the broken app: `python -m streamlit run app.py`
+2. Run the fixed app: `python -m streamlit run app.py`
 
 ## 🕵️‍♂️ Your Mission
 
@@ -25,13 +25,32 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+**Game purpose:** A number guessing game where the player tries to guess a secret number within a limited number of attempts. The game gives hints after each guess and tracks a score.
+
+**Bugs found:**
+
+1. **Flipped hints** — `check_guess` returned "Go HIGHER" when the guess was too high and "Go LOWER" when it was too low. The comparison operators were correct but the messages were swapped.
+
+2. **Silent string comparison** — On every even-numbered attempt, the code cast `secret` to a string before comparing. Python then did lexicographic comparison, so "9" > "10" and the feedback was silently wrong with no error or crash.
+
+3. **Hardcoded range in UI** — The info banner always said "Guess a number between 1 and 100" regardless of difficulty. Hard mode uses 1–50 and Easy uses 1–20, so the banner was misleading.
+
+4. **New game ignored difficulty** — The "New Game" button called `random.randint(1, 100)` instead of using `low`/`high` from the selected difficulty.
+
+5. **Attempt counter off by one** — `attempts` was initialized to `1`, so players got one fewer guess than the displayed limit.
+
+**Fixes applied:**
+
+- Swapped the hint messages in `check_guess` so Too High -> "Go LOWER" and Too Low -> "Go HIGHER"
+- Removed the even/odd `str(secret)` casting entirely; `secret` is always passed as an int
+- Updated `st.info` to use `{low}` and `{high}` variables
+- Updated the new game button to use `random.randint(low, high)` and reset `score`, `status`, and `history`
+- Changed `attempts` initialization from `1` to `0`
+- Refactored `get_range_for_difficulty`, `parse_guess`, `check_guess`, and `update_score` into `logic_utils.py`
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+- ![Fixed winning game](2026-03-16-fixed-winning.png)
 
 ## 🚀 Stretch Features
 
